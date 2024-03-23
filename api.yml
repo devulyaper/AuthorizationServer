@@ -1,0 +1,161 @@
+openapi: 3.0.0
+info:
+  title: APizza Authentication API
+  description: API for user authentication and registration
+  version: 1.0.0
+paths:
+  /registration:
+    post:
+      summary: Register a new user
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+      responses:
+        '200':
+          description: User registration successful
+        '400':
+          description: Bad request
+  /login:
+    post:
+      summary: Authenticate user with email and password
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: User authentication successful
+        '401':
+          description: Unauthorized
+  /users/{id}:
+    get:
+      summary: Get user account information
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      responses:
+        '200':
+          description: User account information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref:
+                  '#/components/schemas/UserGetRequest'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    patch:
+      summary: Update user account information
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User account information updated successfully
+        '400':
+          description: Bad request
+    delete:
+      summary: Delete user account
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      responses:
+        '200':
+          description: User account deleted successfully
+        '400':
+          description: Bad request
+  /jwks:
+    get:
+      summary: Get JSON Web Key Set (JWKS) for JWT token signature verification
+      security:
+        - BearerAuth:
+            - admin
+            - user
+      responses:
+        '200':
+          description: JWKS retrieved successfully
+components:
+  schemas:
+    UserRegistrationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [MALE, FEMALE]
+      required:
+        - email
+        - password
+    UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [MALE, FEMALE]
+    UserGetRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        birthday:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [MALE, FEMALE]

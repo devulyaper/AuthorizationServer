@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.authorizationserver.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class DefaultTokenService implements TokenService {
     private String secretKey;
 
     @Override
-    public String generateToken(String email) {
+    public String generateToken(User user) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
         Instant now = Instant.now();
@@ -27,7 +28,9 @@ public class DefaultTokenService implements TokenService {
         return JWT.create()
                 .withIssuer("auth-service")
                 .withAudience("apizza")
-                .withSubject(email)
+                .withSubject(user.getId().toString())
+                .withClaim("email", user.getEmail())
+                .withClaim("scope", user.getRole().name())
                 .withIssuedAt(Date.from(now))
                 .withExpiresAt(Date.from(exp))
                 .sign(algorithm);

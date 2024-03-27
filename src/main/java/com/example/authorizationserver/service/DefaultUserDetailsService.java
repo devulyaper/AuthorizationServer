@@ -55,7 +55,7 @@ public class DefaultUserDetailsService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void checkCredentials(String email, String password) {
+    public User checkCredentials(String email, String password) {
         Optional<User> optionalUserEntity = userRepository
                 .findByEmail(email);
         if (optionalUserEntity.isEmpty()) {
@@ -67,5 +67,7 @@ public class DefaultUserDetailsService implements UserDetailsService {
         if(!passwordEncoder.matches(password, user.getHashPassword())){
             throw new LoginException("Password is incorrect");
         }
+
+        return user;
     }
 }

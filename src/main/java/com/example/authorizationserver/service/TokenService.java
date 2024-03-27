@@ -1,7 +1,9 @@
 package com.example.authorizationserver.service;
 
+import com.example.authorizationserver.entity.User;
+
 public interface TokenService {
-    String generateToken(String email);
+    String generateToken(User user);
 
     boolean checkToken(String token);
 }
